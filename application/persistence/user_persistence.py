@@ -8,8 +8,8 @@ def get(user_id):
     return User.query.get(user_id)
 
 
-def get_by_username(username):
-    return User.query.filter_by(username=username)
+def get_by_email(email):
+    return User.query.filter_by(email=email).first()
 
 
 def save(user):

@@ -1,0 +1,43 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="apple-touch-icon" href="{{ url_for('static', filename='apple-touch-icon.png') }}">
+
+        <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/normalize.css') }}">
+        <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+        <script src="{{ url_for('static', filename='js/vendor/modernizr-2.8.3.min.js') }}"></script>
+    </head>
+    <body>
+        <!--[if lt IE 8]>
+            <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+
+        <div id="login-panel">
+          <h1>SafePoint</h1>
+          <h2 class="banner">Sign in to your account</h2>
+          <div class="card signin-card">
+            <div class="user-icon"></div>
+            <form class="form-panel" method="post" action="{{ url_for('do_login') }}">
+              <input id="login-email" type="email" placeholder="Enter your email" autofocus="true" name="email">
+              <input id="login-password" type="password" placeholder="Enter your password" name="password">
+              <button type="submit" class="action">Sign in</button>
+            </form>
+          </div>
+
+          <a href="">Create account</a>
+        </div>
+
+        <script src="{{ url_for('static', filename='js/vendor/jquery-1.11.3.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/plugins.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    </body>
+</html>
