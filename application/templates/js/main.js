@@ -1,3 +1,4 @@
+var autocompleteService;
 var map;
 var minZoomLevel = 3;
 
@@ -19,12 +20,25 @@ $(document).mouseup(function(e) {
 /* Change search icon color when the user is typing */
 $('#search').keyup(function() {
   var searchIcon = $('#search-button');
-  if ($(this).val().length === 0) {
+  value = $(this).val();
+
+  if (value.length === 0) {
     searchIcon.removeClass('active');
+    autocompleteService.getQueryPredictions({ input: value }, displayAutocompleteSuggestions);
   } else {
     searchIcon.addClass('active');
   }
 });
+
+function displayAutocompleteSuggestions(predictions, status) {
+  if (status == google.maps.places.PlacesServiceStatus.OK) {
+    predictions.forEach(function(prediction) {
+      var li = document.createElement('li');
+      li.appendChild(document.createTextNode(prediction.description));
+      document.getElementById('autocomplete-results').appendChild(li);
+    });
+  }
+}
 
 function initMap() {
   map = new google.maps.Map(document.getElementById('map'), {
@@ -41,4 +55,6 @@ function initMap() {
       map.setZoom(15);
     });
   }
+
+  autocompleteService = new google.maps.places.AutocompleteService();
 }
