@@ -203,11 +203,15 @@ form {
 
 #search-bar {
   left: 30px;
-  padding: 13px 18px 7px 18px;
+  padding: 0;
   position: fixed;
   top: 15px;
-  width: 360px;
+  width: 400px;
   z-index: 10;
+}
+
+#search-panel {
+  padding: 13px 18px 7px 18px;
 }
 
 #menu-button {
@@ -252,6 +256,46 @@ form {
 
 #search-button.active {
   background-position: -24px 0;
+}
+
+#autocomple-results {
+
+}
+
+ul#results {
+  list-style-type: none;
+  padding-left: 15px;
+  margin: 0;
+}
+
+ul#results.expanded {
+  border-top: 1px solid #ddd;
+  padding: 3px 0 3px 15px;
+}
+
+ul#results li span.place-icon {
+  background: url('../img/place-icon.png') no-repeat left top;
+  background-size: 20px;
+  display: inline-block;
+  height: 25px;
+  margin-right: 25px;
+  width: 20px;
+}
+
+ul#results li span.place-text {
+  cursor: pointer;
+  display: inline-block;
+  line-height: 34px;
+  vertical-align: text-bottom;
+  width: calc(100% - 20px - 25px);
+}
+
+ul#results li span.highlight {
+  font-weight: bold;
+}
+
+ul#results li:not(:first-of-type) span.place-text {
+  border-top: 1px solid #ddd;
 }
 
 #sidebar {

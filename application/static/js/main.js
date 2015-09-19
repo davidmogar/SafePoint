@@ -23,20 +23,38 @@ $('#search').keyup(function() {
   value = $(this).val();
 
   if (value.length === 0) {
+    closeResultsPanel();
     searchIcon.removeClass('active');
-    autocompleteService.getQueryPredictions({ input: value }, displayAutocompleteSuggestions);
   } else {
     searchIcon.addClass('active');
+    autocompleteService.getQueryPredictions({ input: value }, displayAutocompleteSuggestions);
   }
 });
 
+function closeResultsPanel() {
+  var resultsList = $('ul#results');
+  resultsList.empty();
+  resultsList.removeClass('expanded');
+}
+
+/* Shows a panel in the search bar with suggested places */
 function displayAutocompleteSuggestions(predictions, status) {
   if (status == google.maps.places.PlacesServiceStatus.OK) {
-    predictions.forEach(function(prediction) {
-      var li = document.createElement('li');
-      li.appendChild(document.createTextNode(prediction.description));
-      document.getElementById('autocomplete-results').appendChild(li);
-    });
+    var resultsList = $('ul#results');
+    resultsList.empty();
+
+    if (predictions.length > 0) {
+      resultsList.addClass('expanded');
+      predictions.forEach(function(prediction) {
+
+        /* Get input value to highlight that text on results */
+        var highlightedText = $('#search').val();
+        var normalText = prediction.description.substring(highlightedText.length);
+        resultsList.append('<li><span class="place-icon"></span><span class="place-text"><span class="highlight">' + highlightedText + '</span>' + normalText + '</span></li>');
+      });
+    } else {
+      resultsList.removeClass('expanded');
+    }
   }
 }
 
