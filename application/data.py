@@ -3,7 +3,7 @@ __author__ = 'Dani'
 users = [
     {
         "id": 1,
-        "username": "test",
+        "email": "test@safepoint.com",
         "password": "098f6bcd4621d373cade4e832627b4f6"  # test
     }
 ]

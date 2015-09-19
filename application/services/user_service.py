@@ -9,22 +9,22 @@ def get_by_id(user_id):
     return user_persistence.get(user_id)
 
 
-def get_by_username(username):
-    return user_persistence.get_by_username(username)
+def get_by_email(email):
+    return user_persistence.get_by_email(email)
 
 
-def signup(username, password):
-    user = get_by_username(username)
+def signup(email, password):
+    user = get_by_email(email)
     if user is not None:
         return None
     password_hash = hashlib.md5(password.encode('utf')).hexdigest()
-    user = User(username, password_hash)
+    user = User(email, password_hash)
     user_persistence.save(user)
     return user
 
 
-def login(username, password):
-    user = get_by_username(username)
+def login(email, password):
+    user = get_by_email(email)
     if user is None:
         return None
     password_hash = hashlib.md5(password.encode('utf')).hexdigest()

@@ -1,11 +1,12 @@
+from flask import url_for, render_template, request
+from flask.json import dumps
+from werkzeug.utils import redirect, escape
+
 from application import app, prefix
 from application.model.category import Category
 from application.model.report import Report
 from application.model.user import User
-from application.services import category_service, report_service
-from flask import url_for
-from flask.json import dumps
-from werkzeug.utils import redirect
+from application.services import category_service, report_service, user_service
 
 __author__ = 'Dani'
 
@@ -20,7 +21,7 @@ def init():
     db.create_all()
 
     for user_data in data.users:
-        user = User(username=user_data['username'],
+        user = User(email=user_data['email'],
                     password=user_data['password'],
                     user_id=user_data['id'])
         user_persistence.save(user)
@@ -46,7 +47,17 @@ def init():
 
 @app.route(prefix + '/', methods=['GET'])
 def index():
-    return 'Welcome to SafePoint Server'
+    return render_template('login.html')
+
+
+@app.route(prefix + '/login', methods=['POST'])
+def do_login():
+    email = escape(request.form['email'])
+    password = request.form['password']
+    user = user_service.login(email, password)
+    if user is not None:
+        return redirect(url_for('static', filename='index.html'))
+    return render_template('login.html')
 
 
 @app.route(prefix + '/categories', methods=['GET'])
