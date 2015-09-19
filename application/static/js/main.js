@@ -95,6 +95,22 @@ $('#add-report-button').click(function() {
   enableClickPlacement();
 });
 
+function cancelReport() {
+  clearUserMarker();
+  disableClickPlacement();
+  hideInfoPanel();
+  hideScrim();
+  $('#add-report-modal').removeClass('show');
+  showSearchBar();
+}
+
+function clearUserMarker() {
+    if (userMarker) {
+      userMarker.setMap(null);
+      userMarker = null;
+    }
+}
+
 function closeAddReportModal() {
   $('#add-report-modal').removeClass('show');
   hideScrim();
@@ -220,6 +236,7 @@ function placeUserMarker(location) {
     userMarker.setPosition(location);
   } else {
     userMarker = new google.maps.Marker({
+      animation: google.maps.Animation.BOUNCE,
       draggable: true,
       map: map,
       position: location
@@ -236,11 +253,8 @@ function placeUserMarker(location) {
 }
 
 function showAddReportModal() {
+  clearUserMarker();
   disableClickPlacement();
-  if (userMarker) {
-    userMarker.setMap(null);
-    userMarker = null;
-  }
   hideInfoPanel();
   showScrim();
   $('#add-report-modal').addClass('show');

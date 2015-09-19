@@ -331,6 +331,10 @@ ul#results li:not(:first-of-type) span.place-text {
   top: 15px;
 }
 
+#info-panel button:first-of-type {
+  margin-right: 5px;
+}
+
 #info-panel button {
   margin-left: 5px;
 }
