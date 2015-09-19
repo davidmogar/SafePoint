@@ -264,13 +264,16 @@ form {
 
 ul#results {
   list-style-type: none;
-  padding-left: 15px;
+  padding: 0;
   margin: 0;
 }
 
 ul#results.expanded {
   border-top: 1px solid #ddd;
-  padding: 3px 0 3px 15px;
+}
+
+ul#results li:hover {
+  background-color: #f8f8f8;
 }
 
 ul#results li span.place-icon {
@@ -278,7 +281,7 @@ ul#results li span.place-icon {
   background-size: 20px;
   display: inline-block;
   height: 25px;
-  margin-right: 25px;
+  margin: 0 25px 0 15px;
   width: 20px;
 }
 
@@ -287,7 +290,7 @@ ul#results li span.place-text {
   display: inline-block;
   line-height: 34px;
   vertical-align: text-bottom;
-  width: calc(100% - 20px - 25px);
+  width: calc(100% - 20px - 25px - 15px);
 }
 
 ul#results li span.highlight {
@@ -295,7 +298,7 @@ ul#results li span.highlight {
 }
 
 ul#results li:not(:first-of-type) span.place-text {
-  border-top: 1px solid #ddd;
+  border-top: 1px solid #eee;
 }
 
 #sidebar {

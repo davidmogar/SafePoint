@@ -1,4 +1,5 @@
 var autocompleteService;
+var geocoder;
 var map;
 var minZoomLevel = 3;
 
@@ -18,7 +19,7 @@ $(document).mouseup(function(e) {
 });
 
 /* Change search icon color when the user is typing */
-$('#search').keyup(function() {
+$('#search').keyup(function(event) {
   var searchIcon = $('#search-button');
   value = $(this).val();
 
@@ -26,18 +27,56 @@ $('#search').keyup(function() {
     closeResultsPanel();
     searchIcon.removeClass('active');
   } else {
-    searchIcon.addClass('active');
-    autocompleteService.getQueryPredictions({ input: value }, displayAutocompleteSuggestions);
+    if (event.keyCode == '13') {
+      centerMapOnAddress(value);
+    } else {
+      searchIcon.addClass('active');
+      autocompleteService.getQueryPredictions({ input: value }, displayAutocompleteSuggestions);
+    }
   }
 });
 
+/* If the user clicks over an autocomplete result, center the map in that place */
+$('body').on('click', 'ul#results li', function() {
+  var address = $(this).text();
+  $('#search').val(address);
+  centerMapOnAddress(address);
+});
+
+/* If the user clicks on the search button, center the map in the place set on the input field */
+$('#search-button').click(function() {
+  centerMapOnAddress($('#search').val());
+});
+
+/**
+ * Close the results panel, clearing the previous results.
+ */
 function closeResultsPanel() {
   var resultsList = $('ul#results');
   resultsList.empty();
   resultsList.removeClass('expanded');
 }
 
-/* Shows a panel in the search bar with suggested places */
+/**
+ * Centers the map on the specified address, if exists.
+ */
+function centerMapOnAddress(address) {
+  closeResultsPanel();
+
+  geocoder.geocode( { 'address': address}, function(results, status) {
+    if (status == google.maps.GeocoderStatus.OK) {
+      map.setCenter(results[0].geometry.location);
+      var marker = new google.maps.Marker({
+          map: map,
+          position: results[0].geometry.location
+      });
+    }
+  });
+}
+
+/**
+ *Shows a panel in the search bar with suggested places.
+ */
 function displayAutocompleteSuggestions(predictions, status) {
   if (status == google.maps.places.PlacesServiceStatus.OK) {
     var resultsList = $('ul#results');
@@ -58,6 +97,9 @@ function displayAutocompleteSuggestions(predictions, status) {
   }
 }
 
+/**
+ * Initializes the map and the needed services.
+ */
 function initMap() {
   map = new google.maps.Map(document.getElementById('map'), {
     center: { lat: 0, lng: 0 },
@@ -75,4 +117,5 @@ function initMap() {
   }
 
   autocompleteService = new google.maps.places.AutocompleteService();
+  geocoder = new google.maps.Geocoder();
 }
