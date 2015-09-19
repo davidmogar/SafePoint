@@ -8,11 +8,11 @@ La url base de la API es [miw.danimeana.es/safepoint](http://miw.danimeana.es/sa
 HTTP Method | Ruta | Descripción
 :----------:|------|-------------
 GET | /categories | Listado de todas categorias de incidencias.
-GET | /categories/**<id>**/reports | Listado con todas las incidencias de la categoría cuyo identificador es **<id>**.
+GET | /categories/**id**/reports | Listado con todas las incidencias de la categoría cuyo identificador es **id**.
 GET | /reports | Listado con todas las incidencias de todas las categorias.
 POST | /reports | Crea una incidencia nueva. Los parametros necesarios son: **lat**, **lng**, **description** y **category_id**. Además es necesario estár logeado en el sistema.
-GET | /reports/**<id>** | Detalles de la incidencia cuyo identificador es **<id>**.
-DELETE | /reports/**<id>** | Elimina la incidencia cuyo identificador es **<id>**.
+GET | /reports/**id** | Detalles de la incidencia cuyo identificador es **id>**.
+DELETE | /reports/**id** | Elimina la incidencia cuyo identificador es **id**.
 
 ##  INSTALACIÓN
 
