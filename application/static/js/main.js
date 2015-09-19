@@ -50,19 +50,26 @@ $('#search-button').click(function() {
 
 $('#map-type li').click(function() {
   var li = $(this);
-  li.siblings('.enabled').removeClass('enabled');
-  li.addClass('enabled');
 
-  switch(li.index()) {
-    case 0:
-      map.setMapTypeId(google.maps.MapTypeId.SATELLITE);
-      break;
-    case 1:
-      map.setMapTypeId(google.maps.MapTypeId.ROADMAP);
-      break;
-    case 2:
-      map.setMapTypeId(google.maps.MapTypeId.TERRAIN);
-      break;
+  var index = li.index();
+  if (index == 1) {
+    li.toggleClass('enabled');
+    // toggleHeatMap();
+  } else {
+    li.siblings('.enabled').removeClass('enabled');
+    li.addClass('enabled');
+
+    switch(index) {
+      case 0:
+        map.setMapTypeId(google.maps.MapTypeId.SATELLITE);
+        break;
+      case 2:
+        map.setMapTypeId(google.maps.MapTypeId.ROADMAP);
+        break;
+      case 3:
+        map.setMapTypeId(google.maps.MapTypeId.TERRAIN);
+        break;
+    }
   }
 
   closeSidebar();
@@ -75,9 +82,10 @@ $('#reports-categories li').click(function() {
 });
 
 $('#add-report-button').click(function() {
+  map.setOptions({ streetViewControl: false });
   closeSidebar();
-  $('#scrim').addClass('visible');
-  $('#add-report-modal').addClass('show');
+  hideSearchBar();
+  showInfoPanel();
 });
 
 function closeAddReportModal() {
@@ -139,6 +147,24 @@ function displayAutocompleteSuggestions(predictions, status) {
   }
 }
 
+function hideInfoPanel() {
+  $('#info-panel').removeClass('show');
+}
+
+function hideSearchBar() {
+  $('#search-bar').removeClass('show');
+}
+
+function hideUI() {
+  hideInfoPanel();
+  hideSearchBar();
+  closeSideBar();
+}
+
+function showUI() {
+  showSearchBar();
+}
+
 /**
  * Initializes the map and the needed services.
  */
@@ -160,4 +186,20 @@ function initMap() {
 
   autocompleteService = new google.maps.places.AutocompleteService();
   geocoder = new google.maps.Geocoder();
+
+  google.maps.event.addListener(map.getStreetView(), 'visible_changed', function() {
+    if (this.getVisible()) {
+      hideUI();
+    } else {
+      showUI();
+    }
+  });
+}
+
+function showSearchBar() {
+  $('#search-bar').addClass('show');
+}
+
+function showInfoPanel() {
+  $('#info-panel').addClass('show');
 }
