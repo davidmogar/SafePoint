@@ -1,0 +1,43 @@
+@font-face {
+	font-family: "icon";
+	src: url("..icons/icon.eot");
+	src: url("..icons/icon.eot#iefix") format("embedded-opentype"),
+	url("..icons/icon.woff") format("woff"),
+	url("..icons/icon.ttf") format("truetype"),
+	url("..icons/icon.svg") format("svg");
+	font-weight: normal;
+	font-style: normal;
+}
+[class^="icon-"]:before, [class*=" icon-"]:before,
+[class^="icon-"]:after, [class*=" icon-"]:after {
+	font-family: icon;
+  font-size: 20px;
+	font-style: normal;
+	margin-left: 20px;
+}.icon-abduction:before {
+	content: "\e000";
+}
+.icon-criminal:before {
+	content: "\e001";
+}
+.icon-murder:before {
+	content: "\e002";
+}
+.icon-terrain:before {
+	content: "\e003";
+}
+.icon-assault:before {
+	content: "\e004";
+}
+.icon-fraud:before {
+	content: "\e005";
+}
+.icon-burglary:before {
+	content: "\e006";
+}
+.icon-traffic:before {
+	content: "\e007";
+}
+.icon-earth:before {
+	content: "\e008";
+}

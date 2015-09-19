@@ -10,7 +10,7 @@
         <link rel="apple-touch-icon" href="apple-touch-icon.png">
 
         <!-- <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'> -->
-        <link href='https://fonts.googleapis.com/css?family=Roboto:400,700' rel='stylesheet' type='text/css'>
+        <link href='https://fonts.googleapis.com/css?family=Roboto:400,300,700' rel='stylesheet' type='text/css'>
 
         <link rel="stylesheet" href="css/normalize.css">
         <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css">
@@ -35,6 +35,44 @@
 
         <div id="scrim"></div>
         <div id="sidebar">
+          <h1 class="title"><span class="highlight">Safe</span>Point</h1>
+
+          <ul id="map-type">
+            <li><span class="icon icon-earth"></span>Earth</li>
+            <li class="enabled"><span class="icon icon-traffic"></span>Traffic</li>
+            <li><span class="icon icon-terrain"></span>Terrain</li>
+          </ul>
+          <ul id="reports-categories">
+            <li class="enabled"><span class="icon icon-abduction"></span>Abduction</li>
+            <li><span class="icon icon-assault"></span>Assault</li>
+            <li class="enabled"><span class="icon icon-burglary"></span>Burglary</li>
+            <li><span class="icon icon-fraud"></span>Fraud</li>
+            <li class="enabled"><span class="icon icon-murder"></span>Murder</li>
+            <li class="enabled"><span class="icon icon-robbery"></span>Robbery</li>
+          </ul>
+          <ul id="wms-layers">
+            <li><span class="icon icon-assault"></span>WMS layer one</li>
+            <li><span class="icon icon-assault"></span>WMS layer two</li>
+          </ul>
+          <ul>
+            <li id="add-report-button"><span class="icon icon-plus"></span>Add a new report</li>
+          </ul>
+        </div>
+
+        <div id="add-report-modal" class="card">
+          <h2>Add a report</h2>
+          Category:
+          <select>
+            <option value="abduction">Abduction</option>
+            <option value="abduction">Assault</option>
+            <option value="abduction">Burglary</option>
+            <option value="abduction">Fraud</option>
+            <option value="abduction">Murder</option>
+            <option value="abduction">Robbery</option>
+          </select>
+          <p>Description:</p>
+          <textarea name="description"></textarea>
+          <button type="submit" class="action">Create</button>
         </div>
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>

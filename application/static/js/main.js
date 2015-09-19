@@ -11,12 +11,12 @@ $('#menu-button').click(function() {
 
 /* Hide the sidebar if the user clicks outside of it */
 $(document).mouseup(function(e) {
-    var container = $('#sidebar');
+    var container = $('#sidebar, #add-report-modal');
     if (!container.is(e.target) && container.has(e.target).length === 0) {
-        container.removeClass('show');
-        $('#scrim').removeClass('visible');
+        closeSidebar();
+        closeAddReportModal();
     }
-});
+  });
 
 /* Change search icon color when the user is typing */
 $('#search').keyup(function(event) {
@@ -48,6 +48,43 @@ $('#search-button').click(function() {
   centerMapOnAddress($('#search').val());
 });
 
+$('#map-type li').click(function() {
+  var li = $(this);
+  li.siblings('.enabled').removeClass('enabled');
+  li.addClass('enabled');
+
+  switch(li.index()) {
+    case 0:
+      map.setMapTypeId(google.maps.MapTypeId.SATELLITE);
+      break;
+    case 1:
+      map.setMapTypeId(google.maps.MapTypeId.ROADMAP);
+      break;
+    case 2:
+      map.setMapTypeId(google.maps.MapTypeId.TERRAIN);
+      break;
+  }
+
+  closeSidebar();
+});
+
+$('#reports-categories li').click(function() {
+  var li = $(this);
+  li.toggleClass('enabled');
+  closeSidebar();
+});
+
+$('#add-report-button').click(function() {
+  closeSidebar();
+  $('#scrim').addClass('visible');
+  $('#add-report-modal').addClass('show');
+});
+
+function closeAddReportModal() {
+  $('#add-report-modal').removeClass('show');
+  $('#scrim').removeClass('visible');
+}
+
 /**
  * Close the results panel, clearing the previous results.
  */
@@ -55,6 +92,11 @@ function closeResultsPanel() {
   var resultsList = $('ul#results');
   resultsList.empty();
   resultsList.removeClass('expanded');
+}
+
+function closeSidebar() {
+  $('#sidebar').removeClass('show');
+  $('#scrim').removeClass('visible');
 }
 
 /**
