@@ -25,7 +25,7 @@
     </ul>
     <ul id="reports-categories">
         {% for category in categories %}
-        <li><span class="icon icon-{{ category.name.lower() }}" data-id="{{ category.id}}"></span>{{ category.name }}
+        <li data-id="{{ category.id }}"><span class="icon icon-{{ category.name.lower() }}"></span>{{ category.name }}
         </li>
         {% endfor %}
     </ul>
@@ -56,4 +56,5 @@
 <script async defer
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD_CGL5KrEXMedgQ7-nYtEzZ_Z7oLg5gQ4&libraries=places&callback=initMap">
 </script>
+<script src="{{ url_for('static', filename='js/actions.js') }}"></script>
 {% endblock js %}

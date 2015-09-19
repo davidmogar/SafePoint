@@ -104,7 +104,7 @@ def find_reports():
     return dumps(report_service.reports_to_dict(reports))
 
 
-@app.route(prefix + '/categories/<category_name>/reports', methods=['GET'])
-def find_reports_by_category(category_name):
-    reports = category_service.get_reports_by_name(category_name)
+@app.route(prefix + '/categories/<category_id>/reports', methods=['GET'])
+def find_reports_by_category(category_id):
+    reports = category_service.get_reports_by_id(category_id)
     return dumps(report_service.reports_to_dict(reports))

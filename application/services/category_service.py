@@ -7,16 +7,12 @@ def get_by_id(category_id):
     return category_persistence.get(category_id)
 
 
-def get_by_name(name):
-    return category_persistence.get_by_name(name)
-
-
 def get_all():
     return category_persistence.get_all()
 
 
-def get_reports_by_name(name):
-    category = get_by_name(name)
+def get_reports_by_id(category_id):
+    category = get_by_id(category_id)
     if category:
         return category.reports
     else:
