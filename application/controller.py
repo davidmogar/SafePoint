@@ -71,10 +71,8 @@ def init():
 @login_required
 def index():
     categories = category_service.get_all()
-    reports = report_service.get_all()
     return render_template('index.html',
-                           categories=categories,
-                           reports=reports)
+                           categories=categories)
 
 
 @app.route(prefix + '/login', methods=['GET'])

@@ -1,0 +1,3 @@
+function selectCategory(id) {
+    $.get()
+}

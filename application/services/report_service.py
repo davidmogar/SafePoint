@@ -25,8 +25,8 @@ def report_to_dict(report):
         'lng': report.lng,
         'description': report.description,
         'time': report.time,
-        'user_id': report.user.user_id,
-        'category_id': report.category.category_id
+        'user_id': report.user.id,
+        'category_id': report.category.id
     }
     return _dict
 
