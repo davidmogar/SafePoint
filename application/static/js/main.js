@@ -4,7 +4,6 @@ var map;
 var minZoomLevel = 3;
 var selectingPlace = true;
 var clickListenerHandle;
-var reportInfoWindow;
 var userMarker;
 
 /* Show the sidebar if the user clicks the hamburger icon */
@@ -214,10 +213,6 @@ function initMap() {
       showUI();
     }
   });
-
-  reportInfoWindow = new google.maps.InfoWindow({
-    content: 'This was the place! <button onclick="showAddReportModal()">Continue</button>'
-  });
 }
 
 function placeUserMarker(location) {
@@ -229,8 +224,6 @@ function placeUserMarker(location) {
       map: map,
       position: location
     });
-
-    reportInfoWindow.open(map, userMarker);
 
     geocoder.geocode({'location': location}, function(results, status) {
     if (status === google.maps.GeocoderStatus.OK) {
@@ -244,8 +237,10 @@ function placeUserMarker(location) {
 
 function showAddReportModal() {
   disableClickPlacement();
-  userMarker.setMap(null);
-  userMarker = null;
+  if (userMarker) {
+    userMarker.setMap(null);
+    userMarker = null;
+  }
   hideInfoPanel();
   showScrim();
   $('#add-report-modal').addClass('show');
