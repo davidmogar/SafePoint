@@ -20,7 +20,7 @@ def make_report(lat, lng, description, time, user, category):
 
 def report_to_dict(report):
     _dict = {
-        'id': report.report_id,
+        'id': report.id,
         'lat': report.lat,
         'lng': report.lng,
         'description': report.description,

@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Log in - SafePoint{% endblock %}
+{% block body %}
+<div id="map"></div>
+
+<div id="search-bar" class="card">
+    <div id="search-panel">
+        <button id="menu-button"></button>
+        <input id="search" type="text" placeholder="Search SafePoint"/>
+        <button id="search-button"></button>
+    </div>
+    <div id="autocomplete-results">
+        <ul id="results"></ul>
+    </div>
+</div>
+
+<div id="scrim"></div>
+<div id="sidebar">
+    <h1 class="title"><span class="highlight">Safe</span>Point</h1>
+
+    <ul id="map-type">
+        <li><span class="icon icon-earth"></span>Earth</li>
+        <li class="enabled"><span class="icon icon-traffic"></span>Traffic</li>
+        <li><span class="icon icon-terrain"></span>Terrain</li>
+    </ul>
+    <ul id="reports-categories">
+        {% for category in categories %}
+        <li><span class="icon icon-{{ category.name.lower() }}" data-id="{{ category.id}}"></span>{{ category.name }}
+        </li>
+        {% endfor %}
+    </ul>
+    <ul id="wms-layers">
+        <li><span class="icon icon-assault"></span>Earthquakes in the last year</li>
+        <li><span class="icon icon-assault"></span>Fire risks</li>
+    </ul>
+    <ul>
+        <li id="add-report-button"><span class="icon icon-plus"></span>Add a new report</li>
+    </ul>
+</div>
+
+<div id="add-report-modal" class="card">
+    <h2>Add a report</h2>
+    Category:
+    <select>
+        {% for category in categories %}
+        <option value="{{ category.name.lower() }}">{{ category.name }}</option>
+        {% endfor %}
+    </select>
+
+    <p>Description:</p>
+    <textarea name="description"></textarea>
+    <button type="submit" class="action">Create</button>
+</div>
+{% endblock body %}
+{% block js %}
+<script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD_CGL5KrEXMedgQ7-nYtEzZ_Z7oLg5gQ4&libraries=places&callback=initMap">
+</script>
+{% endblock js %}

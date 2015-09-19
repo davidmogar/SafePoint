@@ -1,4 +1,6 @@
-from flask import url_for, render_template, request
+from functools import wraps
+import hashlib
+from flask import url_for, render_template, request, session
 from flask.json import dumps
 from werkzeug.utils import redirect, escape
 
@@ -9,6 +11,26 @@ from application.model.user import User
 from application.services import category_service, report_service, user_service
 
 __author__ = 'Dani'
+
+SESSION_ID_KEY = 'session_id'
+SESSION_EMAIL_KEY = 'session_email'
+
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if SESSION_ID_KEY in session and SESSION_EMAIL_KEY in session:
+            session_id = session[SESSION_ID_KEY]
+            session_email = session[SESSION_EMAIL_KEY]
+            user = user_service.get_by_id(session_id)
+            if user is not None:
+                user_email = user.email
+                user_email_hash = hashlib.md5(user_email.encode('utf')).hexdigest()
+                if session_email == user_email_hash:
+                    return f(*args, **kwargs)
+        return redirect(url_for('login'))
+
+    return decorated_function
 
 
 @app.route(prefix + '/init', methods=['GET'])
@@ -46,7 +68,17 @@ def init():
 
 
 @app.route(prefix + '/', methods=['GET'])
+@login_required
 def index():
+    categories = category_service.get_all()
+    reports = report_service.get_all()
+    return render_template('index.html',
+                           categories=categories,
+                           reports=reports)
+
+
+@app.route(prefix + '/login', methods=['GET'])
+def login():
     return render_template('login.html')
 
 
@@ -56,8 +88,10 @@ def do_login():
     password = request.form['password']
     user = user_service.login(email, password)
     if user is not None:
-        return redirect(url_for('static', filename='index.html'))
-    return render_template('login.html')
+        session[SESSION_ID_KEY] = user.id
+        session[SESSION_EMAIL_KEY] = hashlib.md5(user.email.encode('utf')).hexdigest()
+        return redirect(url_for('index'))
+    return redirect(url_for('login'))
 
 
 @app.route(prefix + '/categories', methods=['GET'])

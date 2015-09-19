@@ -15,19 +15,23 @@ categories = [
     },
     {
         "id": 2,
-        "name": "Traffic"
+        "name": "Assault"
     },
     {
         "id": 3,
-        "name": "Robbery"
+        "name": "Burglary"
     },
     {
         "id": 4,
-        "name": "Fights"
+        "name": "Fraud"
     },
     {
         "id": 5,
-        "name": "Fire"
+        "name": "Murder"
+    },
+    {
+        "id": 6,
+        "name": "Robbery"
     }
 
 ]

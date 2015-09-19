@@ -25,7 +25,7 @@ def get_reports_by_name(name):
 
 def category_to_dict(category):
     _dict = {
-        'id': category.category_id,
+        'id': category.id,
         'name': category.name
     }
     return _dict
