@@ -2,11 +2,15 @@ var autocompleteService;
 var geocoder;
 var map;
 var minZoomLevel = 3;
+var selectingPlace = true;
+var clickListenerHandle;
+var reportInfoWindow;
+var userMarker;
 
 /* Show the sidebar if the user clicks the hamburger icon */
 $('#menu-button').click(function() {
   $('#sidebar').addClass('show');
-  $('#scrim').addClass('visible');
+  showScrim();
 });
 
 /* Hide the sidebar if the user clicks outside of it */
@@ -15,6 +19,9 @@ $(document).mouseup(function(e) {
     if (!container.is(e.target) && container.has(e.target).length === 0) {
         closeSidebar();
         closeAddReportModal();
+        if (!selectingPlace) {
+          showSearchBar();
+        }
     }
   });
 
@@ -86,11 +93,12 @@ $('#add-report-button').click(function() {
   closeSidebar();
   hideSearchBar();
   showInfoPanel();
+  enableClickPlacement();
 });
 
 function closeAddReportModal() {
   $('#add-report-modal').removeClass('show');
-  $('#scrim').removeClass('visible');
+  hideScrim();
 }
 
 /**
@@ -104,7 +112,7 @@ function closeResultsPanel() {
 
 function closeSidebar() {
   $('#sidebar').removeClass('show');
-  $('#scrim').removeClass('visible');
+  hideScrim();
 }
 
 /**
@@ -124,6 +132,10 @@ function centerMapOnAddress(address) {
   });
 }
 
+function disableClickPlacement() {
+  google.maps.event.removeListener(clickListenerHandle);
+  selectingPlace = false;
+}
 /**
  *Shows a panel in the search bar with suggested places.
  */
@@ -147,8 +159,20 @@ function displayAutocompleteSuggestions(predictions, status) {
   }
 }
 
+function enableClickPlacement() {
+  clickListenerHandle = google.maps.event.addListener(map, 'click', function(event) {
+    placeUserMarker(event.latLng);
+  });
+
+  selectingPlace = true;
+}
+
 function hideInfoPanel() {
   $('#info-panel').removeClass('show');
+}
+
+function hideScrim() {
+  $('#scrim').removeClass('show');
 }
 
 function hideSearchBar() {
@@ -159,10 +183,6 @@ function hideUI() {
   hideInfoPanel();
   hideSearchBar();
   closeSideBar();
-}
-
-function showUI() {
-  showSearchBar();
 }
 
 /**
@@ -194,12 +214,55 @@ function initMap() {
       showUI();
     }
   });
+
+  reportInfoWindow = new google.maps.InfoWindow({
+    content: 'This was the place! <button onclick="showAddReportModal()">Continue</button>'
+  });
+}
+
+function placeUserMarker(location) {
+  if (userMarker) {
+    userMarker.setPosition(location);
+  } else {
+    userMarker = new google.maps.Marker({
+      draggable: true,
+      map: map,
+      position: location
+    });
+
+    reportInfoWindow.open(map, userMarker);
+
+    geocoder.geocode({'location': location}, function(results, status) {
+    if (status === google.maps.GeocoderStatus.OK) {
+      if (results[1]) {
+        $('#address').val(results[1].formatted_address);
+      }
+    }
+  });
+  }
+}
+
+function showAddReportModal() {
+  disableClickPlacement();
+  userMarker.setMap(null);
+  userMarker = null;
+  hideInfoPanel();
+  showScrim();
+  $('#add-report-modal').addClass('show');
+}
+
+function showInfoPanel() {
+  $('#info-panel').addClass('show');
 }
 
 function showSearchBar() {
   $('#search-bar').addClass('show');
 }
 
-function showInfoPanel() {
-  $('#info-panel').addClass('show');
+function showScrim() {
+  $('#scrim').addClass('show');
+}
+
+function showUI() {
+  showSearchBar();
 }
