@@ -15,3 +15,8 @@ def get_all():
 def save(report):
     db.session.add(report)
     db.session.commit()
+
+
+def delete(report):
+    db.session.delete(report)
+    db.session.commit()

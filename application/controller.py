@@ -1,6 +1,6 @@
 from functools import wraps
 import hashlib
-from flask import url_for, render_template, request, session
+from flask import url_for, render_template, request, session, flash
 from flask.json import dumps
 from werkzeug.utils import redirect, escape
 
@@ -31,6 +31,15 @@ def login_required(f):
         return redirect(url_for('login'))
 
     return decorated_function
+
+@app.errorhandler(404)
+@app.errorhandler(403)
+@app.errorhandler(405)
+@app.errorhandler(410)
+def not_found(error=None):
+    if error is not None:
+        print('ERROR: ' + str(error))
+    return render_template('404.html'), 404
 
 
 @app.route(prefix + '/init', methods=['GET'])
@@ -92,11 +101,56 @@ def do_login():
     return redirect(url_for('login'))
 
 
+@app.route(prefix + '/logout', methods=['GET'])
+@login_required
+def do_logout():
+    session.pop(SESSION_ID_KEY)
+    session.pop(SESSION_EMAIL_KEY)
+    return redirect(url_for('login'))
+
+
+@app.route(prefix + '/signup', methods=['GET'])
+def signup():
+    return render_template('login.html')
+
+
+@app.route(prefix + '/signup', methods=['POST'])
+def do_signup():
+    email = escape(request.form['email'])
+    confirm_email = escape(request.form['confirm_email'])
+    password = request.form['password']
+    if password.__len__() == 0:
+        flash('Password can not be empty', 'error')
+    if email.__len__() == 0:
+        flash('Email can not be empty', 'error')
+    if email != confirm_email:
+        flash('Emails not equals', 'error')
+    if password.__len__() != 0 and email.__len__() != 0 and email == confirm_email:
+        user = user_service.signup(email, password)
+        if user is not None:
+            session[SESSION_ID_KEY] = user.id
+            session[SESSION_EMAIL_KEY] = hashlib.md5(user.email.encode('utf')).hexdigest()
+            return redirect(url_for('index'))
+        flash('Username already registered', 'error')
+    else:
+        return render_template('signup.html')
+
+
+# Categories
+
 @app.route(prefix + '/categories', methods=['GET'])
 def find_categories():
     categories = category_service.get_all()
     return dumps(category_service.categories_to_dict(categories))
 
+
+@app.route(prefix + '/categories/<category_id>/reports', methods=['GET'])
+def find_reports_by_category(category_id):
+    reports = category_service.get_reports_by_id(category_id)
+    return dumps(report_service.reports_to_dict(reports))
+
+
+# Reports
 
 @app.route(prefix + '/reports', methods=['GET'])
 def find_reports():
@@ -104,7 +158,34 @@ def find_reports():
     return dumps(report_service.reports_to_dict(reports))
 
 
-@app.route(prefix + '/categories/<category_id>/reports', methods=['GET'])
-def find_reports_by_category(category_id):
-    reports = category_service.get_reports_by_id(category_id)
-    return dumps(report_service.reports_to_dict(reports))
+@app.route(prefix + '/reports/<report_id>', methods=['GET'])
+def find_report_by_id(report_id):
+    report = report_service.get_by_id(report_id)
+    if report is None:
+        return redirect(url_for('not_found'))
+    return dumps(report_service.report_to_dict(report))
+
+
+@app.route(prefix + '/reports/<report_id>', methods=['DELETE'])
+def delete_report_by_id(report_id):
+    report = report_service.get_by_id(report_id)
+    if report is None:
+        return redirect(url_for('not_found'))
+    report_service.delete(report)
+    return dumps(report_service.report_to_dict(report))
+
+
+@app.route(prefix + '/reports', methods=['POST'])
+def make_report():
+    lat = escape(request.get_json()['lat'])
+    lng = escape(request.get_json()['lng'])
+    description = escape(request.get_json()['description'])
+    category_id = escape(request.get_json()['category_id'])
+    user_id = session[SESSION_ID_KEY]
+    category = category_service.get_by_id(category_id)
+    user = user_service.get_by_id(user_id)
+    if user is not None and category is not None:
+        report = report_service.make_report(lat, lng, description, user, category)
+        return report
+    else:
+        return redirect(url_for('not_found'))

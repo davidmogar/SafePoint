@@ -18,6 +18,10 @@ def make_report(lat, lng, description, time, user, category):
     return report
 
 
+def delete(report):
+    report_persistence.delete(report)
+
+
 def report_to_dict(report):
     _dict = {
         'id': report.id,
