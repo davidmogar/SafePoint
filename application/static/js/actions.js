@@ -61,8 +61,9 @@ function displayReports(category) {
         map: heatmapActive? null : map,
         position: new google.maps.LatLng(report.lat, report.lng)
       });
+      var date = new Date(report.time).toGMTString();
       var infowindow = new google.maps.InfoWindow({
-        content: '<p>' + report.description + '</p>'
+        content: report.description + '<span class="date">' + date + '</span><p><button>Delete my report</button></p>'
       });
       marker.addListener('click', function() {
         infowindow.open(map, marker);
