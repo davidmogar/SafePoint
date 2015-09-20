@@ -393,7 +393,7 @@ ul#results li:not(:first-of-type) span.place-text {
 }
 
 #sidebar div.scrollable {
-  bottom: 56px;
+  bottom: 90px;
   overflow-y: scroll;
   position:absolute;
   top: 55px;
@@ -542,32 +542,35 @@ ul#results li:not(:first-of-type) span.place-text {
 .icon-open-lock:before {
 	content: "\e006";
 }
-.icon-terrain:before {
+.icon-logout:before {
 	content: "\e007";
 }
-.icon-close-lock:before {
+.icon-terrain:before {
 	content: "\e008";
 }
-.icon-assault:before {
+.icon-close-lock:before {
 	content: "\e009";
 }
-.icon-fraud:before {
+.icon-assault:before {
 	content: "\e00a";
 }
-.icon-burglary:before {
+.icon-fraud:before {
 	content: "\e00b";
 }
-.icon-heatmap:before {
+.icon-burglary:before {
 	content: "\e00c";
 }
-.icon-traffic:before {
+.icon-heatmap:before {
 	content: "\e00d";
 }
-.icon-flooding:before {
+.icon-traffic:before {
 	content: "\e00e";
 }
-.icon-earth:before {
+.icon-flooding:before {
 	content: "\e00f";
+}
+.icon-earth:before {
+	content: "\e010";
 }
 
 /* ==========================================================================
