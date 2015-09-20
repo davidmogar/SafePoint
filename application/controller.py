@@ -188,6 +188,6 @@ def make_report():
     user = user_service.get_by_id(user_id)
     if user is not None and category is not None:
         report = report_service.make_report(lat, lng, description, user, category)
-        return report
+        return dumps(report_service.report_to_dict(report))
     else:
         return redirect(url_for('not_found'))
