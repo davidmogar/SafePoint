@@ -1,11 +1,12 @@
 var autocompleteService;
+var clickListenerHandle;
 var geocoder;
+var heatmap;
 var map;
 var minZoomLevel = 3;
 var selectingPlace = true;
-var clickListenerHandle;
 var userMarker;
-var heatmap;
+
 
 /* Show the sidebar if the user clicks the hamburger icon */
 $('#menu-button').click(function() {
@@ -55,6 +56,7 @@ $('#search-button').click(function() {
   centerMapOnAddress($('#search').val());
 });
 
+/* Add event to let the user change the map type */
 $('#map-type li').click(function() {
   var li = $(this);
 
@@ -65,28 +67,38 @@ $('#map-type li').click(function() {
   } else {
     li.siblings('.enabled:not(:nth-of-type(2))').removeClass('enabled');
     li.addClass('enabled');
-
-    switch(index) {
-      case 0:
-        map.setMapTypeId(google.maps.MapTypeId.SATELLITE);
-        break;
-      case 2:
-        map.setMapTypeId(google.maps.MapTypeId.ROADMAP);
-        break;
-      case 3:
-        map.setMapTypeId(google.maps.MapTypeId.TERRAIN);
-        break;
-    }
+    changeMapType(index);
   }
 
   closeSidebar();
 });
 
+/**
+ * Changes the map type.
+ */
+function changeMapType(type) {
+  switch(type) {
+    case 0:
+      map.setMapTypeId(google.maps.MapTypeId.SATELLITE);
+      break;
+    case 2:
+      map.setMapTypeId(google.maps.MapTypeId.ROADMAP);
+      break;
+    case 3:
+      map.setMapTypeId(google.maps.MapTypeId.TERRAIN);
+      break;
+  }
+}
+
+/* Control behaviour of categories on click */
 $('body').on('click', '#reports-categories li', function() {
+
+  /* Close sidebar and toggle category */
   closeSidebar();
   var li = $(this);
   li.toggleClass('enabled');
 
+  /* Update map markers */
   var categoryId = li.data('id');
   if (li.hasClass('enabled')) {
     displayReports(categoryId);
@@ -95,6 +107,7 @@ $('body').on('click', '#reports-categories li', function() {
   }
 });
 
+/* Start report creation when the user clicks over the report button */
 $('#add-report-button').click(function() {
   map.setOptions({ streetViewControl: false });
   closeSidebar();
@@ -103,6 +116,9 @@ $('#add-report-button').click(function() {
   enableClickPlacement();
 });
 
+/**
+ * Cancels the report creation and show back the UI.
+ */
 function cancelReport() {
   clearUserMarker();
   disableClickPlacement();
@@ -112,6 +128,9 @@ function cancelReport() {
   showSearchBar();
 }
 
+/**
+ * Clear the marker placed by the user (if exists).
+ */
 function clearUserMarker() {
     if (userMarker) {
       userMarker.setMap(null);
@@ -119,6 +138,9 @@ function clearUserMarker() {
     }
 }
 
+/**
+ * Closes the modal to add reports.
+ */
 function closeAddReportModal() {
   $('#add-report-modal').removeClass('show');
   hideScrim();
@@ -133,6 +155,9 @@ function closeResultsPanel() {
   resultsList.removeClass('expanded');
 }
 
+/**
+ * Closes the sidebar.
+ */
 function closeSidebar() {
   $('#sidebar').removeClass('show');
   hideScrim();
@@ -155,10 +180,27 @@ function centerMapOnAddress(address) {
   });
 }
 
+/**
+ * Centers the map in the user location if geoLocation is available.
+ */
+function centerMapOnUserLocation() {
+  if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(function(position) {
+      initialLocation = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+      map.setCenter(initialLocation);
+      map.setZoom(15);
+    });
+  }
+}
+
+/**
+ * Disables click over the map.
+ */
 function disableClickPlacement() {
   google.maps.event.removeListener(clickListenerHandle);
   selectingPlace = false;
 }
+
 /**
  *Shows a panel in the search bar with suggested places.
  */
@@ -182,6 +224,9 @@ function displayAutocompleteSuggestions(predictions, status) {
   }
 }
 
+/**
+ * Enables click over the map, letting the user to place a marker.
+ */
 function enableClickPlacement() {
   clickListenerHandle = google.maps.event.addListener(map, 'click', function(event) {
     placeUserMarker(event.latLng);
@@ -190,6 +235,10 @@ function enableClickPlacement() {
   selectingPlace = true;
 }
 
+/**
+ * Returns an array with all the markers coordinates. Only markers of
+ * enabled categories are used.
+ */
 function getHeatmapPoints() {
   points = [];
   $('#reports-categories li.enabled').each(function() {
@@ -203,18 +252,30 @@ function getHeatmapPoints() {
   return points;
 }
 
+/**
+ * Hides the info panel.
+ */
 function hideInfoPanel() {
   $('#info-panel').removeClass('show');
 }
 
+/**
+ * Hides the scrim.
+ */
 function hideScrim() {
   $('#scrim').removeClass('show');
 }
 
+/**
+ * Hides the search bar.
+ */
 function hideSearchBar() {
   $('#search-bar').removeClass('show');
 }
 
+/**
+ * Hides all the elements of the UI.
+ */
 function hideUI() {
   hideInfoPanel();
   hideSearchBar();
@@ -232,28 +293,35 @@ function initMap() {
     minZoom: minZoomLevel
   });
 
-  if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(function(position) {
-      initialLocation = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-      map.setCenter(initialLocation);
-      map.setZoom(15);
-    });
-  }
-
-  autocompleteService = new google.maps.places.AutocompleteService();
-  geocoder = new google.maps.Geocoder();
-
-  google.maps.event.addListener(map.getStreetView(), 'visible_changed', function() {
-    if (this.getVisible()) {
-      hideUI();
-    } else {
-      showUI();
-    }
-  });
-
-  heatmap = new google.maps.visualization.HeatmapLayer();
+  centerMapOnUserLocation();
+  initMapAuxiliarComponents();
 }
 
+/**
+ * Initializes Google Maps services and visualizations.
+ */
+function initMapAuxiliarComponents() {
+  autocompleteService = new google.maps.places.AutocompleteService();
+  geocoder = new google.maps.Geocoder();
+  heatmap = new google.maps.visualization.HeatmapLayer();
+  setStreetViewListener();
+}
+
+/**
+ * Opens the modal used to add new reports.
+ */
+function openAddReportModal() {
+  clearUserMarker();
+  disableClickPlacement();
+  hideInfoPanel();
+  showScrim();
+  $('#add-report-modal').addClass('show');
+}
+
+
+/**
+ * Add a marker in the position selected by the user.
+ */
 function placeUserMarker(location) {
   if (userMarker) {
     userMarker.setPosition(location);
@@ -265,42 +333,70 @@ function placeUserMarker(location) {
       position: location
     });
 
-    geocoder.geocode({'location': location}, function(results, status) {
+    updateAddressInputValue(location)
+  }
+}
+
+/**
+ * Adds an event to streetview to control when to hide UI elements.
+ */
+function setStreetViewListener() {
+  google.maps.event.addListener(map.getStreetView(), 'visible_changed', function() {
+    if (this.getVisible()) {
+      hideUI();
+    } else {
+      showUI();
+    }
+  });
+}
+
+/**
+ * Shows info panel.
+ */
+function showInfoPanel() {
+  $('#info-panel').addClass('show');
+}
+
+/**
+ * Shows search bar.
+ */
+function showSearchBar() {
+  $('#search-bar').addClass('show');
+}
+
+/**
+ * Shows scrim.
+ */
+function showScrim() {
+  $('#scrim').addClass('show');
+}
+
+/**
+ * Shows UI components.
+ */
+function showUI() {
+  showSearchBar();
+}
+
+/**
+ * Toggles heatmap visibility.
+ */
+function toggleHeatmap() {
+  heatmap.setData(getHeatmapPoints());
+  heatmap.setMap(heatmap.getMap()? null : map);
+  toggleReports();
+}
+
+/**
+ * Get the address of the given coordinates and
+ * updates the modal window input with it.
+ */
+function updateAddressInputValue(location) {
+  geocoder.geocode({'location': location}, function(results, status) {
     if (status === google.maps.GeocoderStatus.OK) {
       if (results[1]) {
         $('#address').val(results[1].formatted_address);
       }
     }
   });
-  }
-}
-
-function showAddReportModal() {
-  clearUserMarker();
-  disableClickPlacement();
-  hideInfoPanel();
-  showScrim();
-  $('#add-report-modal').addClass('show');
-}
-
-function showInfoPanel() {
-  $('#info-panel').addClass('show');
-}
-
-function showSearchBar() {
-  $('#search-bar').addClass('show');
-}
-
-function showScrim() {
-  $('#scrim').addClass('show');
-}
-
-function showUI() {
-  showSearchBar();
-}
-
-function toggleHeatmap() {
-  heatmap.setData(getHeatmapPoints());
-  heatmap.setMap(heatmap.getMap()? null : map);
-  toggleReports();
 }
