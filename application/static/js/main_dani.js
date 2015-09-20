@@ -1,12 +1,17 @@
 var autocompleteService;
+var clickListenerHandle;
 var geocoder;
+var heatmap;
 var map;
 var minZoomLevel = 3;
+var selectingPlace = true;
+var userMarker;
+
 
 /* Show the sidebar if the user clicks the hamburger icon */
 $('#menu-button').click(function() {
   $('#sidebar').addClass('show');
-  $('#scrim').addClass('visible');
+  showScrim();
 });
 
 /* Hide the sidebar if the user clicks outside of it */
@@ -15,6 +20,9 @@ $(document).mouseup(function(e) {
     if (!container.is(e.target) && container.has(e.target).length === 0) {
         closeSidebar();
         closeAddReportModal();
+        if (!selectingPlace) {
+          showSearchBar();
+        }
     }
   });
 
@@ -48,47 +56,110 @@ $('#search-button').click(function() {
   centerMapOnAddress($('#search').val());
 });
 
+/* Add event to let the user change the map type */
 $('#map-type li').click(function() {
   var li = $(this);
-  li.siblings('.enabled').removeClass('enabled');
-  li.addClass('enabled');
 
-  switch(li.index()) {
+  var index = li.index();
+  if (index == 1) {
+    li.toggleClass('enabled');
+    toggleHeatmap();
+  } else {
+    li.siblings('.enabled:not(:nth-of-type(2))').removeClass('enabled');
+    li.addClass('enabled');
+    changeMapType(index);
+  }
+
+  closeSidebar();
+});
+
+/**
+ * Changes the map type.
+ */
+function changeMapType(type) {
+  switch(type) {
     case 0:
       map.setMapTypeId(google.maps.MapTypeId.SATELLITE);
       break;
-    case 1:
+    case 2:
       map.setMapTypeId(google.maps.MapTypeId.ROADMAP);
       break;
-    case 2:
+    case 3:
       map.setMapTypeId(google.maps.MapTypeId.TERRAIN);
       break;
   }
+}
 
+/* Control behaviour of categories on click */
+$('body').on('click', '#reports-categories li', function() {
+
+  /* Close sidebar and toggle category */
   closeSidebar();
-});
-
-$('#reports-categories li').click(function() {
   var li = $(this);
   li.toggleClass('enabled');
-  var id = li.data('id');
-  if (li.hasClass('enabled')){
-    selectCategory(id);
+
+  /* Update map markers */
+  var categoryId = li.data('id');
+  if (li.hasClass('enabled')) {
+    displayReports(categoryId);
   } else {
-    clearCategory(id)
+    clearReports(categoryId)
   }
-  closeSidebar();
 });
 
+/* Control behaviour of categories on click */
+$('body').on('click', '#wms-layers li', function() {
+  /* Close sidebar and toggle category */
+  closeSidebar();
+  var li = $(this);
+  li.toggleClass('enabled');
+
+  /* Update map markers */
+  var wmsLayerId = li.data('id');
+  if (li.hasClass('enabled')) {
+    loadWmsLayer(wmsLayerId);
+  } else {
+    unloadWmsLayer(wmsLayerId)
+  }
+});
+
+/* Start report creation when the user clicks over the report button */
 $('#add-report-button').click(function() {
+  map.setOptions({ streetViewControl: false });
   closeSidebar();
-  $('#scrim').addClass('visible');
-  $('#add-report-modal').addClass('show');
+  hideSearchBar();
+  showInfoPanel();
+  enableClickPlacement();
 });
 
+/**
+ * Cancels the report creation and show back the UI.
+ */
+function cancelReport() {
+  clearUserMarker();
+  disableClickPlacement();
+  hideInfoPanel();
+  hideScrim();
+  $('#add-report-modal').removeClass('show');
+  showSearchBar();
+}
+
+/**
+ * Clear the marker placed by the user (if exists).
+ */
+function clearUserMarker() {
+    if (userMarker) {
+      userMarker.setMap(null);
+      userMarker = null;
+    }
+}
+
+/**
+ * Closes the modal to add reports.
+ */
 function closeAddReportModal() {
   $('#add-report-modal').removeClass('show');
-  $('#scrim').removeClass('visible');
+  hideScrim();
 }
 
 /**
@@ -100,9 +171,12 @@ function closeResultsPanel() {
   resultsList.removeClass('expanded');
 }
 
+/**
+ * Closes the sidebar.
+ */
 function closeSidebar() {
   $('#sidebar').removeClass('show');
-  $('#scrim').removeClass('visible');
+  hideScrim();
 }
 
 /**
@@ -120,6 +194,27 @@ function centerMapOnAddress(address) {
       });
     }
   });
+}
+
+/**
+ * Centers the map in the user location if geoLocation is available.
+ */
+function centerMapOnUserLocation() {
+  if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(function(position) {
+      initialLocation = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+      map.setCenter(initialLocation);
+      map.setZoom(15);
+    });
+  }
+}
+
+/**
+ * Disables click over the map.
+ */
+function disableClickPlacement() {
+  google.maps.event.removeListener(clickListenerHandle);
+  selectingPlace = false;
 }
 
 /**
@@ -146,6 +241,64 @@ function displayAutocompleteSuggestions(predictions, status) {
 }
 
 /**
+ * Enables click over the map, letting the user to place a marker.
+ */
+function enableClickPlacement() {
+  clickListenerHandle = google.maps.event.addListener(map, 'click', function(event) {
+    placeUserMarker(event.latLng);
+  });
+
+  selectingPlace = true;
+}
+
+/**
+ * Returns an array with all the markers coordinates. Only markers of
+ * enabled categories are used.
+ */
+function getHeatmapPoints() {
+  points = [];
+  $('#reports-categories li.enabled').each(function() {
+    var reports = markers[$(this).data('id')];
+    if (reports) {
+      reports.forEach(function(marker) {
+        points.push(marker.getPosition());
+      });
+    }
+  });
+  return points;
+}
+
+/**
+ * Hides the info panel.
+ */
+function hideInfoPanel() {
+  $('#info-panel').removeClass('show');
+}
+
+/**
+ * Hides the scrim.
+ */
+function hideScrim() {
+  $('#scrim').removeClass('show');
+}
+
+/**
+ * Hides the search bar.
+ */
+function hideSearchBar() {
+  $('#search-bar').removeClass('show');
+}
+
+/**
+ * Hides all the elements of the UI.
+ */
+function hideUI() {
+  hideInfoPanel();
+  hideSearchBar();
+  closeSideBar();
+}
+
+/**
  * Initializes the map and the needed services.
  */
 function initMap() {
@@ -156,14 +309,110 @@ function initMap() {
     minZoom: minZoomLevel
   });
 
-  if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(function(position) {
-      initialLocation = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-      map.setCenter(initialLocation);
-      map.setZoom(15);
-    });
-  }
+  centerMapOnUserLocation();
+  initMapAuxiliarComponents();
+}
 
+/**
+ * Initializes Google Maps services and visualizations.
+ */
+function initMapAuxiliarComponents() {
   autocompleteService = new google.maps.places.AutocompleteService();
   geocoder = new google.maps.Geocoder();
+  heatmap = new google.maps.visualization.HeatmapLayer();
+  setStreetViewListener();
+}
+
+/**
+ * Opens the modal used to add new reports.
+ */
+function openAddReportModal() {
+  clearUserMarker();
+  disableClickPlacement();
+  hideInfoPanel();
+  showScrim();
+  $('#add-report-modal').addClass('show');
+}
+
+
+/**
+ * Add a marker in the position selected by the user.
+ */
+function placeUserMarker(location) {
+  if (userMarker) {
+    userMarker.setPosition(location);
+  } else {
+    userMarker = new google.maps.Marker({
+      animation: google.maps.Animation.BOUNCE,
+      draggable: true,
+      map: map,
+      position: location
+    });
+
+    updateAddressInputValue(location)
+  }
+}
+
+/**
+ * Adds an event to streetview to control when to hide UI elements.
+ */
+function setStreetViewListener() {
+  google.maps.event.addListener(map.getStreetView(), 'visible_changed', function() {
+    if (this.getVisible()) {
+      hideUI();
+    } else {
+      showUI();
+    }
+  });
+}
+
+/**
+ * Shows info panel.
+ */
+function showInfoPanel() {
+  $('#info-panel').addClass('show');
+}
+
+/**
+ * Shows search bar.
+ */
+function showSearchBar() {
+  $('#search-bar').addClass('show');
+}
+
+/**
+ * Shows scrim.
+ */
+function showScrim() {
+  $('#scrim').addClass('show');
+}
+
+/**
+ * Shows UI components.
+ */
+function showUI() {
+  showSearchBar();
+}
+
+/**
+ * Toggles heatmap visibility.
+ */
+function toggleHeatmap() {
+  heatmap.setData(getHeatmapPoints());
+  heatmap.setMap(heatmap.getMap()? null : map);
+  toggleReports();
+}
+
+/**
+ * Get the address of the given coordinates and
+ * updates the modal window input with it.
+ */
+function updateAddressInputValue(location) {
+  geocoder.geocode({'location': location}, function(results, status) {
+    if (status === google.maps.GeocoderStatus.OK) {
+      if (results[1]) {
+        $('#address').val(results[1].formatted_address);
+      }
+    }
+  });
 }

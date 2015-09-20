@@ -32,6 +32,7 @@ def login_required(f):
 
     return decorated_function
 
+
 @app.errorhandler(404)
 @app.errorhandler(403)
 @app.errorhandler(405)
@@ -98,7 +99,8 @@ def do_login():
         session[SESSION_ID_KEY] = user.id
         session[SESSION_EMAIL_KEY] = hashlib.md5(user.email.encode('utf')).hexdigest()
         return redirect(url_for('index'))
-    return redirect(url_for('login'))
+    flash('Invalid credentials', 'error')
+    return render_template('login.html')
 
 
 @app.route(prefix + '/logout', methods=['GET'])
@@ -117,15 +119,15 @@ def signup():
 @app.route(prefix + '/signup', methods=['POST'])
 def do_signup():
     email = escape(request.form['email'])
-    confirm_email = escape(request.form['confirm_email'])
+    confirm_password = escape(request.form['confirm_password'])
     password = request.form['password']
     if password.__len__() == 0:
         flash('Password can not be empty', 'error')
     if email.__len__() == 0:
         flash('Email can not be empty', 'error')
-    if email != confirm_email:
-        flash('Emails not equals', 'error')
-    if password.__len__() != 0 and email.__len__() != 0 and email == confirm_email:
+    if password != confirm_password:
+        flash('Passwords not equals', 'error')
+    if password.__len__() != 0 and email.__len__() != 0 and password == confirm_password:
         user = user_service.signup(email, password)
         if user is not None:
             session[SESSION_ID_KEY] = user.id
