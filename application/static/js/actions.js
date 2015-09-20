@@ -1,4 +1,4 @@
-var restUrl = 'http://156.35.95.67/safepoint/';
+var restUrl = window.location.origin + '/safepoint/';
 var markers = {};
 
 
