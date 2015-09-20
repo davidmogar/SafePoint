@@ -107,6 +107,22 @@ $('body').on('click', '#reports-categories li', function() {
   }
 });
 
+/* Control behaviour of wms layers on click */
+$('body').on('click', '#wms-layers li', function() {
+  /* Close sidebar and toggle category */
+  closeSidebar();
+  var li = $(this);
+  li.toggleClass('enabled');
+
+  /* Update map markers */
+  var wmsLayerId = li.data('id');
+  if (li.hasClass('enabled')) {
+    loadWmsLayer(wmsLayerId);
+  } else {
+    unloadWmsLayer(wmsLayerId)
+  }
+});
+
 /* Start report creation when the user clicks over the report button */
 $('#add-report-button').click(function() {
   map.setOptions({ streetViewControl: false });
