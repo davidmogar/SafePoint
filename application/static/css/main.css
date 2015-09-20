@@ -379,6 +379,14 @@ ul#results li:not(:first-of-type) span.place-text {
   left: 0;
 }
 
+#sidebar div.scrollable {
+  bottom: 56px;
+  overflow-y: scroll;
+  position:absolute;
+  top: 55px;
+  width: 100%;
+}
+
 #sidebar ul {
   border-top: 1px solid #d8d8d8;
   list-style-type: none;
@@ -404,6 +412,13 @@ ul#results li:not(:first-of-type) span.place-text {
   height: 25px;
   margin: 0 30px 0 20px;
   width: 20px;
+}
+
+#sidebar-bottom {
+  background-color: white;
+  bottom:0;
+  position: absolute;
+  width:100%;
 }
 
 #scrim {
