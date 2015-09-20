@@ -213,7 +213,7 @@ form.form-panel {
   font-size: 30px;
 }
 
-#login-panel div.alert {
+div.alert {
   background-color: #ef5350;
   border: 1px solid #f44336;
   border-radius: 2px;
@@ -222,7 +222,7 @@ form.form-panel {
   padding: 10px 20px;
 }
 
-#login-panel div.alert p {
+div.alert p {
   margin: 0;
 }
 
@@ -433,7 +433,7 @@ ul#results li:not(:first-of-type) span.place-text {
   overflow: hidden;
   padding: 0;
   position: absolute;
-  top: 20%;
+  top: 10%;
   transition: opacity 0.2s ease-in-out;
   width: 0;
   z-index: 200;

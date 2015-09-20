@@ -45,16 +45,19 @@ function clearReports(category) {
 /**
  * Creates a marker for a given report.
  */
-function createMarker(report, icon, map) {
+function createMarker(category, report, icon, map) {
   var marker = new google.maps.Marker({
     animation: google.maps.Animation.DROP,
     icon: icon,
     map: map,
-    position: new google.maps.LatLng(report.lat, report.lng)
+    position: new google.maps.LatLng(report.lat, report.lng),
+    id: report.id
   });
   var date = new Date(report.time).toGMTString();
   var infowindow = new google.maps.InfoWindow({
-    content: report.description + '<span class="date">' + date + '</span><p><button>Delete my report</button></p>'
+    content: report.description + '<span class="date">' + date +
+        '</span><p><button onclick="deleteReport(' + category + ', ' +
+        report.id + ')">Delete my report</button></p>'
   });
   marker.addListener('click', function() {
     infowindow.open(map, marker);
@@ -73,23 +76,59 @@ function createMarkerIcon(category) {
 }
 
 /**
+ * Deletes a report from the server.
+ */
+function deleteReport(category, reportId) {
+  var categoryMarkers = markers[category];
+  for (var i = 0; i < categoryMarkers.length; i++) {
+    if (categoryMarkers[i].id === reportId) {
+      categoryMarkers[i].setMap(null);
+      categoryMarkers.splice(i, 1);
+    }
+  }
+
+  var url = restUrl + 'reports/' + reportId;
+  $.ajax({
+    url: url,
+    type: 'DELETE'
+  });
+}
+/**
  * Fetch reports for a given category and creates
  * a marker for each one.
  */
 function displayReports(category) {
   var heatmapActive = heatmap.getMap() != null;
-  var url = restUrl + "categories/" + category + "/reports";
+  var url = restUrl + 'categories/' + category + '/reports';
   markers[category] = [];
 
   $.get(url, function(data) {
     var markerIcon = createMarkerIcon(category);
     jQuery.parseJSON(data).forEach(function(report) {
-      markers[category].push(createMarker(report, markerIcon, heatmapActive? null : map));
+      markers[category].push(createMarker(category, report, markerIcon, heatmapActive? null : map));
     });
 
     /* Update heatmap if needed */
     if (heatmapActive) {
       heatmap.setData(getHeatmapPoints());
+    }
+  });
+}
+
+/**
+ * Submits report data to the server.
+ */
+function submitReport() {
+  getAddReportModalData(function(data) {
+    if (data) {
+      var url = restUrl + 'reports';
+      $.post(url, data).done(function() {
+        closeAddReportModal();
+        showSearchBar();
+      }).fail(function(error) {
+        console.log(error);
+        $('#add-report-modal h2').after('<div class="alert"><p>' + error + '</p></div>');
+      });
     }
   });
 }

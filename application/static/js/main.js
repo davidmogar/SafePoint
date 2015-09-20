@@ -235,6 +235,24 @@ function enableClickPlacement() {
   selectingPlace = true;
 }
 
+function getAddReportModalData(callback) {
+  var address = $('#address').val();
+  if (!address) {
+    callback();
+  } else {
+    geocoder.geocode( { 'address': address }, function(results, status) {
+      if (status == google.maps.GeocoderStatus.OK) {
+        var latitude = results[0].geometry.location.lat();
+        var longitude = results[0].geometry.location.lng();
+        var description = $('#add-report-modal textarea').val();
+        var category = $('#add-report-modal select').val();
+
+        callback({ lat: latitude, lng: longitude, category: category, description: description });
+      }
+    });
+  }
+}
+
 /**
  * Returns an array with all the markers coordinates. Only markers of
  * enabled categories are used.

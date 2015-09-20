@@ -59,22 +59,22 @@
           </ul>
         </div>
 
-        <div id="add-report-modal" class="card">
+        <div id="add-report-modal" class="card show">
           <h2>Add a report</h2>
           <p>Address:</p>
           <input id="address" type="text" name="address" autofocus="true"></input>
           Category:
           <select>
-            <option value="abduction">Abduction</option>
-            <option value="abduction">Assault</option>
-            <option value="abduction">Burglary</option>
-            <option value="abduction">Fraud</option>
-            <option value="abduction">Murder</option>
-            <option value="abduction">Robbery</option>
+            <option value="1">Abduction</option>
+            <option value="2">Assault</option>
+            <option value="3">Burglary</option>
+            <option value="4">Fraud</option>
+            <option value="5">Murder</option>
+            <option value="6">Robbery</option>
           </select>
           <p>Description:</p>
           <textarea name="description"></textarea>
-          <button type="submit" class="action">Create</button>
+          <button type="submit" onclick="submitReport()" class="action">Create</button>
         </div>
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
