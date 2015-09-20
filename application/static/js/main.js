@@ -5,6 +5,7 @@ var minZoomLevel = 3;
 var selectingPlace = true;
 var clickListenerHandle;
 var userMarker;
+var heatmap;
 
 /* Show the sidebar if the user clicks the hamburger icon */
 $('#menu-button').click(function() {
@@ -60,9 +61,9 @@ $('#map-type li').click(function() {
   var index = li.index();
   if (index == 1) {
     li.toggleClass('enabled');
-    // toggleHeatMap();
+    toggleHeatmap();
   } else {
-    li.siblings('.enabled').removeClass('enabled');
+    li.siblings('.enabled:not(:nth-of-type(2))').removeClass('enabled');
     li.addClass('enabled');
 
     switch(index) {
@@ -81,10 +82,17 @@ $('#map-type li').click(function() {
   closeSidebar();
 });
 
-$('#reports-categories li').click(function() {
+$('body').on('click', '#reports-categories li', function() {
+  closeSidebar();
   var li = $(this);
   li.toggleClass('enabled');
-  closeSidebar();
+
+  var categoryId = li.data('id');
+  if (li.hasClass('enabled')) {
+    displayReports(categoryId);
+  } else {
+    clearReports(categoryId)
+  }
 });
 
 $('#add-report-button').click(function() {
@@ -182,6 +190,19 @@ function enableClickPlacement() {
   selectingPlace = true;
 }
 
+function getHeatmapPoints() {
+  points = [];
+  $('#reports-categories li.enabled').each(function() {
+    var reports = markers[$(this).data('id')];
+    if (reports) {
+      reports.forEach(function(marker) {
+        points.push(marker.getPosition());
+      });
+    }
+  });
+  return points;
+}
+
 function hideInfoPanel() {
   $('#info-panel').removeClass('show');
 }
@@ -229,6 +250,8 @@ function initMap() {
       showUI();
     }
   });
+
+  heatmap = new google.maps.visualization.HeatmapLayer();
 }
 
 function placeUserMarker(location) {
@@ -274,4 +297,10 @@ function showScrim() {
 
 function showUI() {
   showSearchBar();
+}
+
+function toggleHeatmap() {
+  heatmap.setData(getHeatmapPoints());
+  heatmap.setMap(heatmap.getMap()? null : map);
+  toggleReports();
 }
