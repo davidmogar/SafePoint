@@ -266,7 +266,7 @@ function getAddReportModalData(callback) {
         var description = $('#add-report-modal textarea').val();
         var category = $('#add-report-modal select').val();
 
-        callback({ lat: latitude, lng: longitude, category: category, description: description });
+        callback({ lat: latitude, lng: longitude, category_id: category, description: description });
       }
     });
   }

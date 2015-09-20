@@ -127,7 +127,7 @@ function submitReport() {
             $.ajax({
                 type: 'post',
                 url: url,
-                data: data,
+                data: JSON.stringify(data),
                 contentType: 'application/json',
                 traditional: true,
                 success: function (data) {
