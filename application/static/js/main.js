@@ -436,8 +436,8 @@ function toggleHeatmap() {
 function updateAddressInputValue(location) {
   geocoder.geocode({'location': location}, function(results, status) {
     if (status === google.maps.GeocoderStatus.OK) {
-      if (results[1]) {
-        $('#address').val(results[1].formatted_address);
+      if (results[0]) {
+        $('#address').val(results[0].formatted_address);
       }
     }
   });
