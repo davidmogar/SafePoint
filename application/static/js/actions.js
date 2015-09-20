@@ -115,6 +115,15 @@ function submitReport() {
                 contentType: 'application/json',
                 traditional: true,
                 success: function (data) {
+                    var report = $.parseJSON(data)
+                    var category = report['category_id']
+                    var li = $('#reports-categories li[data-id="' + category + '"]');
+                    if (li.hasClass('enabled')) {
+                        clearReports(categoryId);
+                        displayReports(categoryId);
+                    } else {
+                        li.click()
+                    }
                     closeAddReportModal();
                     showSearchBar();
                 },
@@ -126,6 +135,7 @@ function submitReport() {
         }
     });
 }
+
 
 /**
  * Toggles reports visibility, clearing them from the map.
