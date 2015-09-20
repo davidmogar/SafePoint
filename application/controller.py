@@ -113,7 +113,7 @@ def do_logout():
 
 @app.route(prefix + '/signup', methods=['GET'])
 def signup():
-    return render_template('login.html')
+    return render_template('signup.html')
 
 
 @app.route(prefix + '/signup', methods=['POST'])

@@ -121,18 +121,26 @@ function displayReports(category) {
  * Submits report data to the server.
  */
 function submitReport() {
-  getAddReportModalData(function(data) {
-    if (data) {
-      var url = restUrl + 'reports';
-      $.post(url, data).done(function() {
-        closeAddReportModal();
-        showSearchBar();
-      }).fail(function(error) {
-        console.log(error);
-        $('#add-report-modal h2').after('<div class="alert"><p>' + error + '</p></div>');
-      });
-    }
-  });
+    getAddReportModalData(function (data) {
+        if (data) {
+            var url = restUrl + 'reports';
+            $.ajax({
+                type: 'post',
+                url: url,
+                data: data,
+                contentType: 'application/json',
+                traditional: true,
+                success: function (data) {
+                    closeAddReportModal();
+                    showSearchBar();
+                },
+                error: function (error) {
+                    console.log(error);
+                    $('#add-report-modal h2').after('<div class="alert"><p>Error submitting a report</p></div>');
+                }
+            });
+        }
+    });
 }
 
 /**
