@@ -49,11 +49,15 @@ function displayReports(category) {
   markers[category] = [];
 
   $.get(url, function(data) {
+    var markerIcon = new google.maps.MarkerImage('img/markers/' + category + '.png',
+        new google.maps.Size(24, 24),
+        new google.maps.Point(0, 0),
+        new google.maps.Point(12, 12));
     var reports = jQuery.parseJSON(data);
     reports.forEach(function(report) {
       var marker = new google.maps.Marker({
         animation: google.maps.Animation.DROP,
-        icon: 'img/markers/' + category + '.png',
+        icon: markerIcon,
         map: heatmapActive? null : map,
         position: new google.maps.LatLng(report.lat, report.lng)
       });
