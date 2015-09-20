@@ -1,15 +1,15 @@
 {% extends "base.html" %}
-{% block title %}Sign in - SafePoint{% endblock %}
+{% block title %}Sign up - SafePoint{% endblock %}
 {% block body %}
 <div id="login-panel">
     <h1 class="title"><span class="highlight">Safe</span>Point</h1>
 
-    <h2 class="banner">Sign in to your account</h2>
+    <h2 class="banner">Create a new account</h2>
 
     <div class="card signin-card">
         <div class="user-icon"></div>
 
-        {% with errors = get_flashed_messages(category_filter=["error"]) %}
+        {% with errors = get_flashed_messages(csategory_filter=["error"]) %}
         {% if errors %}
         <div class="alert">
             {% for msg in errors %}
@@ -19,13 +19,13 @@
         {% endif %}
         {% endwith %}
 
-        <form class="form-panel" method="post" action="{{ url_for('do_login') }}">
+        <form class="form-panel" method="post" action="{{ url_for('do_signup') }}">>
             <input id="login-email" type="email" placeholder="Enter your email" autofocus="true" name="email">
             <input id="login-password" type="password" placeholder="Enter your password" name="password">
-            <button type="submit" class="action">Sign in</button>
+            <input id="login-password-again" type="password" placeholder="Enter your password again"
+                   name="confirm_password">
+            <button type="submit" class="action">Sign up</button>
         </form>
     </div>
-
-    <a href="{{ url_for('signup') }}">Create account</a>
 </div>
 {% endblock body %}
