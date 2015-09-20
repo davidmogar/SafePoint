@@ -1,6 +1,6 @@
 var services = [
     {
-        "name": "Hospitales",
+        "name": "Hospitals",
         "label": "hospital",
         "url": "http://www.sigmayores.csic.es/ArcGIS/services/Rec-Sanitarios/MapServer/WMSServer?",
         "format": "image/png",
