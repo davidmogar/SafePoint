@@ -1,15 +1,5 @@
 var services = [
     {
-        "name": "Earthquakes",
-        "label": "earthquake",
-        "url": "http://www.ign.es/wms-inspire/geofisica?",
-        "format": "image/png",
-        "styles": "Terremotos",
-        "layers": "Ultimos365dias",
-        "version": "1.1.1",
-        "opacity": 1,
-        "z-index": 2
-    }, {
         "name": "Hospitales",
         "label": "hospital",
         "url": "http://www.sigmayores.csic.es/ArcGIS/services/Rec-Sanitarios/MapServer/WMSServer?",
@@ -18,7 +8,7 @@ var services = [
         "layers": "Centros_salud,Hospitales",
         "version": "1.1.1",
         "opacity": 1,
-        "z-index": 3
+        "z-index": 2
     }, {
         "name": "Fire risks",
         "label": "fire",
