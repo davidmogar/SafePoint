@@ -177,7 +177,7 @@ def delete_report_by_id(report_id):
     if report is None:
         return redirect(url_for('not_found'))
     report_service.delete(report)
-    return dumps(report_service.report_to_dict(report))
+    return "ok"
 
 
 @app.route(prefix + '/reports', methods=['POST'])
