@@ -138,8 +138,7 @@ def do_signup():
             session[SESSION_EMAIL_KEY] = hashlib.md5(user.email.encode('utf')).hexdigest()
             return redirect(url_for('index'))
         flash('Username already registered', 'error')
-    else:
-        return render_template('signup.html')
+    return render_template('signup.html')
 
 
 # Categories
