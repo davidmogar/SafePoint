@@ -53,19 +53,19 @@
     Category:
     <select>
         {% for category in categories %}
-        <option value="{{ category.name.lower() }}">{{ category.name }}</option>
+        <option value="{{ category.id }}">{{ category.name }}</option>
         {% endfor %}
     </select>
 
     <p>Description:</p>
     <textarea name="description"></textarea>
-    <button type="submit" class="action">Create</button>
+    <button type="submit" onclick="submitReport()" class="action">Create</button>
 </div>
 
 {% endblock body %}
 {% block js %}
 <script async defer
-          src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD_CGL5KrEXMedgQ7-nYtEzZ_Z7oLg5gQ4&libraries=places,visualization&callback=initMap">
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD_CGL5KrEXMedgQ7-nYtEzZ_Z7oLg5gQ4&libraries=places,visualization&callback=initMap">
 </script>
 <script src="{{ url_for('static', filename='js/actions.js') }}"></script>
 <script src="{{ url_for('static', filename='js/wms.js') }}"></script>
