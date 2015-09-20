@@ -1,3 +1,4 @@
+import time
 from functools import wraps
 import hashlib
 from flask import url_for, render_template, request, session, flash
@@ -190,7 +191,7 @@ def make_report():
     category = category_service.get_by_id(category_id)
     user = user_service.get_by_id(user_id)
     if user is not None and category is not None:
-        report = report_service.make_report(lat, lng, description, user, category)
+        report = report_service.make_report(lat, lng, description, round(time.time()*1000), user, category)
         return dumps(report_service.report_to_dict(report))
     else:
         return redirect(url_for('not_found'))
