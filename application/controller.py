@@ -172,6 +172,7 @@ def find_report_by_id(report_id):
 
 
 @app.route(prefix + '/reports/<report_id>', methods=['DELETE'])
+@login_required
 def delete_report_by_id(report_id):
     report = report_service.get_by_id(report_id)
     if report is None:
@@ -181,6 +182,7 @@ def delete_report_by_id(report_id):
 
 
 @app.route(prefix + '/reports', methods=['POST'])
+@login_required
 def make_report():
     lat = escape(request.get_json()['lat'])
     lng = escape(request.get_json()['lng'])
