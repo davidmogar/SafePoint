@@ -1,30 +1,6 @@
 var restUrl = window.location.origin + '/safepoint/';
 var markers = {};
 
-
-$(function() {
-  //addCategories();
-});
-
-/**
- * Fetch categories and add them to the sidebar.
- */
-function addCategories() {
-  var url = restUrl + "categories";
-  $.get(url, function(data) {
-    var container = $('#reports-categories');
-    container.empty();
-
-    var categories = jQuery.parseJSON(data);
-    categories.forEach(function(category) {
-      var className = category.name.toLowerCase();
-      container.append('<li data-id="' + category.id +
-          '"><span class="icon icon-' + className +
-          '"></span>' + category.name + '</li>');
-    });
-  });
-}
-
 /**
  * Clear from the map all the reports of the given category.
  */

@@ -37,7 +37,7 @@ var services = [
         "styles": "default",
         "layers": "FloodingRisk",
         "version": "1.1.0",
-        "opacity": 1,
+        "opacity": 0.7,
         "z-index": 1
     }
 ];
