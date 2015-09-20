@@ -94,6 +94,7 @@ function deleteReport(category, reportId) {
     type: 'DELETE'
   });
 }
+
 /**
  * Fetch reports for a given category and creates
  * a marker for each one.

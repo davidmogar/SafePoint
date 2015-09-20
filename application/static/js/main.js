@@ -235,6 +235,9 @@ function enableClickPlacement() {
   selectingPlace = true;
 }
 
+/**
+ * Get data from add report modal and send it to the callback function.
+ */
 function getAddReportModalData(callback) {
   var address = $('#address').val();
   if (!address) {
