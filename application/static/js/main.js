@@ -15,8 +15,10 @@ function setUserId(id) {
 
 /* Show the sidebar if the user clicks the hamburger icon */
 $('#menu-button').click(function() {
-  $('#sidebar').addClass('show');
-  showScrim();
+  if ($('#sidebar-lock-button').hasClass('icon-open-lock')) {
+    $('#sidebar').addClass('show');
+    showScrim();
+  }
 });
 
 /* Hide the sidebar if the user clicks outside of it */
@@ -180,8 +182,10 @@ function closeResultsPanel() {
  * Closes the sidebar.
  */
 function closeSidebar() {
-  $('#sidebar').removeClass('show');
-  hideScrim();
+  if ($('#sidebar-lock-button').hasClass('icon-open-lock')) {
+    $('#sidebar').removeClass('show');
+    hideScrim();
+  }
 }
 
 /**
@@ -427,6 +431,18 @@ function toggleHeatmap() {
   heatmap.setData(getHeatmapPoints());
   heatmap.setMap(heatmap.getMap()? null : map);
   toggleReports();
+}
+
+/**
+ * Toggles sidebar lock, what fixed the sidebar to the left and
+ * shrink the content to fit.
+ */
+function toggleSidebarLock() {
+  var lock = $('#sidebar-lock-button');
+  lock.toggleClass('icon-open-lock');
+  lock.toggleClass('icon-close-lock');
+  lock.hasClass('icon-open-lock') ? closeSidebar() : hideScrim();
+  $('#wrapper').toggleClass('shrink');
 }
 
 /**
