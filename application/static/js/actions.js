@@ -119,8 +119,8 @@ function submitReport() {
                     var category = report['category_id']
                     var li = $('#reports-categories li[data-id="' + category + '"]');
                     if (li.hasClass('enabled')) {
-                        clearReports(categoryId);
-                        displayReports(categoryId);
+                        clearReports(category);
+                        displayReports(category);
                     } else {
                         li.click()
                     }
