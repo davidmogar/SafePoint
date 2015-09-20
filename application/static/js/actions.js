@@ -55,11 +55,19 @@ function createMarker(category, report, icon, map) {
     id: report.id
   });
   var date = new Date(report.time).toGMTString();
-  var infowindow = new google.maps.InfoWindow({
-    content: report.description + '<span class="date">' + date +
-        '</span><p><button onclick="deleteReport(' + category + ', ' +
-        report.id + ')">Delete my report</button></p>'
-  });
+  var infowindow;
+  if (userId == report.user_id) {
+      infowindow = new google.maps.InfoWindow({
+          content: report.description + '<span class="date">' + date +
+          '</span><p><button onclick="deleteReport(' + category + ', ' +
+          report.id + ')">Delete my report</button></p>'
+      });
+  } else {
+      infowindow = new google.maps.InfoWindow({
+          content: report.description + '<span class="date">' + date +
+          '</span>'
+      });
+  }
   marker.addListener('click', function() {
     infowindow.open(map, marker);
   });

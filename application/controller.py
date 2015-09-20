@@ -80,9 +80,12 @@ def init():
 @app.route(prefix + '/', methods=['GET'])
 @login_required
 def index():
+    user_id = session[SESSION_ID_KEY]
+    user = user_service.get_by_id(user_id)
     categories = category_service.get_all()
     return render_template('index.html',
-                           categories=categories)
+                           categories=categories,
+                           user=user)
 
 
 @app.route(prefix + '/login', methods=['GET'])

@@ -64,6 +64,10 @@
 
 {% endblock body %}
 {% block js %}
+<script type="text/javascript">
+    setUserId({{ user.id }});
+</script>
+
 <script async defer
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD_CGL5KrEXMedgQ7-nYtEzZ_Z7oLg5gQ4&libraries=places,visualization&callback=initMap">
 </script>

@@ -6,6 +6,11 @@ var map;
 var minZoomLevel = 3;
 var selectingPlace = true;
 var userMarker;
+var userId;
+
+function setUserId(id) {
+  userId = id;
+}
 
 
 /* Show the sidebar if the user clicks the hamburger icon */

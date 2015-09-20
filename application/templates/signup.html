@@ -9,7 +9,7 @@
     <div class="card signin-card">
         <div class="user-icon"></div>
 
-        {% with errors = get_flashed_messages(csategory_filter=["error"]) %}
+        {% with errors = get_flashed_messages(category_filter=["error"]) %}
         {% if errors %}
         <div class="alert">
             {% for msg in errors %}
@@ -19,7 +19,7 @@
         {% endif %}
         {% endwith %}
 
-        <form class="form-panel" method="post" action="{{ url_for('do_signup') }}">>
+        <form class="form-panel" method="post" action="{{ url_for('do_signup') }}">
             <input id="login-email" type="email" placeholder="Enter your email" autofocus="true" name="email">
             <input id="login-password" type="password" placeholder="Enter your password" name="password">
             <input id="login-password-again" type="password" placeholder="Enter your password again"
