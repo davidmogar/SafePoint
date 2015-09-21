@@ -399,7 +399,7 @@ ul#results li:not(:first-of-type) span.place-text {
 
 #sidebar div.scrollable {
   bottom: 90px;
-  overflow-y: scroll;
+  overflow-y: auto;
   position:absolute;
   top: 55px;
   width: 100%;
