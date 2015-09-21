@@ -11,7 +11,7 @@ GET | /categories | Listado de todas categorias de incidencias.
 GET | /categories/**id**/reports | Listado con todas las incidencias de la categoría cuyo identificador es **id**.
 GET | /reports | Listado con todas las incidencias de todas las categorias.
 POST | /reports | Crea una incidencia nueva. Los parametros necesarios son: **lat**, **lng**, **description** y **category_id**. Además es necesario estár logeado en el sistema.
-GET | /reports/**id** | Detalles de la incidencia cuyo identificador es **id>**.
+GET | /reports/**id** | Detalles de la incidencia cuyo identificador es **id**.
 DELETE | /reports/**id** | Elimina la incidencia cuyo identificador es **id**.
 
 ##  INSTALACIÓN
@@ -23,10 +23,9 @@ Instalar las herramientas de Python3:
 * Ubuntu:
 ```bash
 sudo apt-get update
-sudo apt-get -y install python3 python3-pip libffi-dev
+sudo apt-get -y install python3 python3-pip
 sudo pip3 install virtualenv
 ```
-*Nota: Es necesario instalar libffi-dev (usado en el sdk de PayPal)*
 
 * Mac OS X (requiere [brew](http://brew.sh)):
 ```bash
