@@ -41,7 +41,7 @@ $('#search').keyup(function(event) {
   if ($('#results').children().length > 0 &&
       (event.keyCode == '38' || event.keyCode == '40')) {
     navigateAutocompleteList(event.keyCode);
-  } else {
+  } else if (event.keyCode != 27){
     if (value.length === 0) {
       closeResultsPanel();
       searchIcon.removeClass('active');
@@ -59,6 +59,10 @@ $('#search').keyup(function(event) {
       }
     }
   }
+});
+
+$(document).keyup(function(e) {
+  if (e.keyCode == 27) closeResultsPanel();
 });
 
 /* If the user clicks over an autocomplete result, center the map in that place */
@@ -145,6 +149,19 @@ function cancelReport() {
 }
 
 /**
+ * Centers the map on the specified address, if exists.
+ */
+function centerMapOnAddress(address) {
+  closeResultsPanel();
+
+  geocoder.geocode( { 'address': address}, function(results, status) {
+    if (status == google.maps.GeocoderStatus.OK) {
+      map.setCenter(results[0].geometry.location);
+    }
+  });
+}
+
+/**
  * Changes the map type.
  */
 function changeMapType(type) {
@@ -196,19 +213,6 @@ function closeSidebar() {
     $('#sidebar').removeClass('show');
     hideScrim();
   }
-}
-
-/**
- * Centers the map on the specified address, if exists.
- */
-function centerMapOnAddress(address) {
-  closeResultsPanel();
-
-  geocoder.geocode( { 'address': address}, function(results, status) {
-    if (status == google.maps.GeocoderStatus.OK) {
-      map.setCenter(results[0].geometry.location);
-    }
-  });
 }
 
 /**
@@ -323,6 +327,7 @@ function hideScrim() {
  */
 function hideSearchBar() {
   $('#search-bar').removeClass('show');
+  closeResultsPanel();
 }
 
 /**
