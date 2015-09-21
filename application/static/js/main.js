@@ -38,15 +38,25 @@ $('#search').keyup(function(event) {
   var searchIcon = $('#search-button');
   value = $(this).val();
 
-  if (value.length === 0) {
-    closeResultsPanel();
-    searchIcon.removeClass('active');
+  if ($('#results').children().length > 0 &&
+      (event.keyCode == '38' || event.keyCode == '40')) {
+    navigateAutocompleteList(event.keyCode);
   } else {
-    if (event.keyCode == '13') {
-      centerMapOnAddress(value);
+    if (value.length === 0) {
+      closeResultsPanel();
+      searchIcon.removeClass('active');
     } else {
-      searchIcon.addClass('active');
-      autocompleteService.getQueryPredictions({ input: value }, displayAutocompleteSuggestions);
+      if (event.keyCode == '13') {
+        var liSelected = $('#results li.selected');
+        if (liSelected.length) {
+          value = $('#results li.selected span.place-text').text();
+          $('#search').val(value);
+        }
+        centerMapOnAddress(value);
+      } else {
+        searchIcon.addClass('active');
+        autocompleteService.getQueryPredictions({ input: value }, displayAutocompleteSuggestions);
+      }
     }
   }
 });
@@ -79,23 +89,6 @@ $('#map-type li').click(function() {
 
   closeSidebar();
 });
-
-/**
- * Changes the map type.
- */
-function changeMapType(type) {
-  switch(type) {
-    case 0:
-      map.setMapTypeId(google.maps.MapTypeId.SATELLITE);
-      break;
-    case 2:
-      map.setMapTypeId(google.maps.MapTypeId.ROADMAP);
-      break;
-    case 3:
-      map.setMapTypeId(google.maps.MapTypeId.TERRAIN);
-      break;
-  }
-}
 
 /* Control behaviour of categories on click */
 $('body').on('click', '#reports-categories li', function() {
@@ -152,6 +145,23 @@ function cancelReport() {
 }
 
 /**
+ * Changes the map type.
+ */
+function changeMapType(type) {
+  switch(type) {
+    case 0:
+      map.setMapTypeId(google.maps.MapTypeId.SATELLITE);
+      break;
+    case 2:
+      map.setMapTypeId(google.maps.MapTypeId.ROADMAP);
+      break;
+    case 3:
+      map.setMapTypeId(google.maps.MapTypeId.TERRAIN);
+      break;
+  }
+}
+
+/**
  * Clear the marker placed by the user (if exists).
  */
 function clearUserMarker() {
@@ -197,10 +207,6 @@ function centerMapOnAddress(address) {
   geocoder.geocode( { 'address': address}, function(results, status) {
     if (status == google.maps.GeocoderStatus.OK) {
       map.setCenter(results[0].geometry.location);
-      var marker = new google.maps.Marker({
-          map: map,
-          position: results[0].geometry.location
-      });
     }
   });
 }
@@ -240,8 +246,8 @@ function displayAutocompleteSuggestions(predictions, status) {
 
         /* Get input value to highlight that text on results */
         var highlightedText = $('#search').val();
-        var normalText = prediction.description.substring(highlightedText.length);
-        resultsList.append('<li><span class="place-icon"></span><span class="place-text"><span class="highlight">' + highlightedText + '</span>' + normalText + '</span></li>');
+        resultsList.append('<li><span class="place-icon"></span><span class="place-text">' +
+            highlightWords(prediction.description, highlightedText) + '</span></li>');
       });
     } else {
       resultsList.removeClass('expanded');
@@ -329,6 +335,14 @@ function hideUI() {
 }
 
 /**
+ * Find a given word in a line and highlight it.
+ */
+function highlightWords(line, word) {
+  var regex = new RegExp('(' + word + ')', 'gi');
+  return line.replace(regex, '<span class="highlight">$1</span>');
+}
+
+/**
  * Initializes the map and the needed services.
  */
 function initMap() {
@@ -351,6 +365,49 @@ function initMapAuxiliarComponents() {
   geocoder = new google.maps.Geocoder();
   heatmap = new google.maps.visualization.HeatmapLayer();
   setStreetViewListener();
+}
+
+/**
+ * Handles navigation over the autocomplet list.
+ */
+function navigateAutocompleteList(keyCode) {
+  var current = $('#results li.selected');
+
+  switch (keyCode) {
+    case 38: // Up arrow
+      navigateAutocompleteListUp(current);
+      break;
+    case 40: // Down arrow
+      navigateAutocompleteListDown(current);
+      break;
+  }
+}
+
+/**
+ * Select the next element of the autocomplete list if there is one.
+ */
+function navigateAutocompleteListDown(current) {
+  if (current.length) {
+    var next = current.next();
+    if (next.length) {
+      current.next().addClass('selected');
+      current.removeClass('selected');
+    }
+  } else {
+    current.removeClass('selected');
+    $('#results li:first-of-type').addClass('selected');
+  }
+}
+
+/**
+ * Select the previous element of the autocomplete list if there is one.
+ */
+function navigateAutocompleteListUp(current) {
+  var prev = current.prev();
+  if (prev.length) {
+    current.removeClass('selected');
+    prev.addClass('selected');
+  }
 }
 
 /**
