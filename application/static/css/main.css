@@ -128,8 +128,9 @@ textarea {
   display: block;
   font-family: 'Open Sans', sans-serif;
   font-size: 14px;
+  height: auto;
   margin-bottom: 10px;
-  padding: 20px 10px;
+  padding: 10px;
   position: relative;
   width: 100%;
   z-index: 1;
