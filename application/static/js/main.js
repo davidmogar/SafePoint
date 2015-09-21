@@ -193,6 +193,8 @@ function clearUserMarker() {
  */
 function closeAddReportModal() {
   $('#add-report-modal').removeClass('show');
+  $('#add-report-modal textarea').val('');
+  $('#add-report-modal select').val(1);
   hideScrim();
 }
 
